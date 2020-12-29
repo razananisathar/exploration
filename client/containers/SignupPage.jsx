@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import {
   FormHelperText,
   FormControl,
@@ -11,9 +11,14 @@ import {
   Text,
   LightMode,
   Flex,
+  createStandaloneToast,
 } from '@chakra-ui/react';
+import { useAuth } from '../use-auth';
 
 const SignupPage = () => {
+  const history = useHistory();
+  const auth = useAuth();
+
   const [newUser, setNewUserField] = useState({
     username: '',
     // useremail: '',
@@ -65,14 +70,35 @@ const SignupPage = () => {
         body: JSON.stringify(newUser),
       })
         .then((res) => {
-          console.log('fetch request with new user sent to server');
-          return res.json();
+          // redirect user to home.
+          if (res.status === 200) {
+            return res.json();
+          }
+
+          // return error response.
+          return res.json().then((data) => {
+            throw data;
+          });
         })
-        .then((data) => console.log(data))
-        .catch((err) => console.log(
-          'An error occured in this fetch request to send new user',
-          err,
-        ));
+        .then(({ user }) => {
+          auth.signin(
+            () => {
+              history.replace('/time/home');
+            },
+            user.id,
+            user.username
+          );
+        })
+        .catch((e) => {
+          const toast = createStandaloneToast();
+          toast({
+            title: 'Error',
+            description: e.err,
+            status: 'error',
+            duration: 9000,
+            position: 'top',
+          });
+        });
     }
   };
 

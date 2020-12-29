@@ -1,8 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import {
-  Button, Container, Box, Stack,
-} from '@chakra-ui/react';
+import { Button, Container, Box, Stack } from '@chakra-ui/react';
 import Footer from '../components/Footer';
 
 const HomePage = () => (
@@ -24,11 +22,11 @@ const HomePage = () => (
             Login
           </Button>
         </NavLink>
-        <NavLink to="/time/home">
+        {/* <NavLink to="/time/home">
           <Button border="2px" borderColor="cyan.500">
             TIME Home
           </Button>
-        </NavLink>
+        </NavLink> */}
       </Stack>
 
       <Footer />

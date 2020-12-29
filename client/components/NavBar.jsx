@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 import {
   Menu,
@@ -19,15 +20,24 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import { GrDirections } from 'react-icons/gr';
 // import { IconContext } from 'react-icons';
 
+import { useAuth } from '../use-auth';
+
 // stateless functional component
 
 export default function NavBar() {
+  const auth = useAuth();
+  const history = useHistory();
+
   const handleSignOut = () => {
     fetch('/api/member/logout', {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     })
-      .then((body) => console.log(body))
+      .then((res) => {
+        if (res.status === 200) {
+          auth.signout(() => history.push('/'));
+        }
+      })
       .catch((error) => {
         console.error('Error:', error);
       });
@@ -78,6 +88,7 @@ export default function NavBar() {
             >
               Log Out
             </Button>
+            <Text fontSize="xs">Logged in as {auth.user.username}</Text>
           </GridItem>
         </Grid>
       </Box>
